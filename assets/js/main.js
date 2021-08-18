@@ -40,6 +40,15 @@
             });
         });
 
+        $('#klyp-cf7-to-zoho-method').on('change', function(e) {
+            e.preventDefault();
+            if ($(this).val() == 'API') {
+                $('.klyp-cf7-to-zoho-method-fields').hide();
+            } else {
+                $('.klyp-cf7-to-zoho-method-fields').show();
+            }
+        });
+
         $('#klyp-cf7-to-zoho-map-add-new-map').on('click', function(e) {
             e.preventDefault();
             let tfoot = $('#klyp-cf7-to-zoho-tfoot-map').html();

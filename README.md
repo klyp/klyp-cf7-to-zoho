@@ -9,3 +9,7 @@ https://en-au.wordpress.org/plugins/contact-form-7/
 
 #### v1.0.0 - 2021.08.06
 Initial release
+
+#### v1.0.1 - 2021.08.13
+Added Lead Source
+Added option to submit as webform

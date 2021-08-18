@@ -22,19 +22,30 @@ function klypZhCf7CatchSubmission($result, $tags)
     // form options
     $cf7FormId          = intval(sanitize_key($_POST['_wpcf7']));
     $cf7FormFields      = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-cf-map-fields', true);
+    $zhFormLeadSource   = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-leadsource', true);
     $zhFormFields       = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-zh-map-fields', true);
+    $zhFormMethod       = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-method', true);
 
     // start zoho
     $zoho = new klypZoho();
-    $zoho->cf7FormId     = $cf7FormId;
-    $zoho->cf7FormFields = $cf7FormFields;
-    $zoho->zhFormFields  = $zhFormFields;
-    $zoho->zhObject      = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-object', true);
-    $zoho->zhPrimaryKey  = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-primary-key', true);
-    $zoho->postedData    = klypCF7ToZohoSanitizeInput($_POST);
+    $zoho->cf7FormId        = $cf7FormId;
+    $zoho->cf7FormFields    = $cf7FormFields;
+    $zoho->zhFormMethod     = $zhFormMethod;
+    $zoho->zhFormLeadSource = $zhFormLeadSource;
+    $zoho->zhFormFields     = $zhFormFields;
+    $zoho->postedData       = klypCF7ToZohoSanitizeInput($_POST);
 
     // create contact
-    $zohoReturn = $zoho->upsert();
+    if ($zhFormMethod == 'API') {
+        $zoho->zhObject      = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-object', true);
+        $zoho->zhPrimaryKey  = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-primary-key', true);
+        $zohoReturn = $zoho->upsert();
+    } elseif ($zhFormMethod == 'Webform') {
+        $zoho->actionType    = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-method-actionType', true);
+        $zoho->xnQsjsdp      = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-method-xnQsjsdp', true);
+        $zoho->xmIwtLD       = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-method-xmIwtLD', true);
+        $zohoReturn = $zoho->webform();
+    }
 
     return $result;
 }
