@@ -18,6 +18,7 @@ class klypZoho
     public $zhFormFields;
     public $zhObject;
 
+    public $actionType;
     public $xnQsjsdp;
     public $xmIwtLD;
 
