@@ -13,8 +13,13 @@ class klypZoho
 
     public $cf7FormId;
     public $cf7FormFields;
+    public $zhFormMethod;
+    public $zhFormLeadSource;
     public $zhFormFields;
     public $zhObject;
+
+    public $xnQsjsdp;
+    public $xmIwtLD;
 
     public $data = array ();
     public $postedData = array ();
@@ -28,7 +33,7 @@ class klypZoho
         $this->dataCentre   = get_option('klyp_cf7tozoho_data_centre');
     }
 
-    private function remotePost($url, $method = 'POST', $body, $headers)
+    private function remotePost($url, $method = 'POST', $body, $headers = array())
     {
         $response = wp_remote_post(
             $url,
@@ -67,10 +72,23 @@ class klypZoho
 
     private function processData()
     {
+        // add lead source
+        if ($this->zhFormLeadSource != '') {
+            $this->data += array(($this->zhFormMethod == 'Webform' ? 'Lead source' : 'Lead_Source') => $this->zhFormLeadSource);
+        }
+
         for ($i = 0; $i <= count($this->zhFormFields); $i++) {
             if ($this->zhFormFields[$i] != '') {
-                $this->data += array($this->zhFormFields[$i] => $this->postedData[$this->cf7FormFields[$i]]);
+                list($apiField, $webFormField) = explode('|', $this->zhFormFields[$i]);
+                $theField = ($this->zhFormMethod == 'Webform' ? $webFormField : $apiField);
+                $this->data += array($theField => $this->postedData[$this->cf7FormFields[$i]]);
             }
+        }
+
+        if ($this->zhFormMethod == 'Webform') {
+            $this->data += array('actionType' => $this->actionType);
+            $this->data += array('xnQsjsdp' => $this->xnQsjsdp);
+            $this->data += array('xmIwtLD' => $this->xmIwtLD);
         }
 
         return $this->data;
@@ -154,6 +172,20 @@ class klypZoho
 
             return $this->getFormFields();
         }
+    }
+
+    public function webform()
+    {
+        $url        = 'https://crm.zoho.com.au/crm/WebToLeadForm';
+        $data       = $this->processData();
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_exec($ch);
+        curl_close($ch);
     }
 
     public function upsert()
