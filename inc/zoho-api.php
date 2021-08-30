@@ -114,14 +114,6 @@ class klypZoho
             $params
         );
 
-        if (defined('WP_DEBUG') && true === WP_DEBUG) {
-            // log
-            error_log('Start of refreshing token: ' . date('l jS \of F Y h:i:s A'));
-            error_log('URL: ' . $url);
-            error_log('Response: ' . print_r($response, true));
-            error_log('End of refreshing token: ' . date('l jS \of F Y h:i:s A'));
-        }
-
         $body = wp_remote_retrieve_body($response);
 
         if ($body) {
@@ -147,14 +139,6 @@ class klypZoho
         $response   = $this->remoteGet($url, array('Authorization' => 'Zoho-oauthtoken ' . $this->token));
         $status     = $this->remoteStatus($response);
 
-        if (defined('WP_DEBUG') && true === WP_DEBUG) {
-            // log
-            error_log('Start of getting fields: ' . date('l jS \of F Y h:i:s A'));
-            error_log('URL: ' . $url);
-            error_log('Response: ' . print_r($response, true));
-            error_log('End of getting fields: ' . date('l jS \of F Y h:i:s A'));
-        }
-
         if ($status == 200) {
             $body = wp_remote_retrieve_body($response);
 
@@ -166,10 +150,6 @@ class klypZoho
         } else { // refresh token
             $newRefreshToken = $this->refreshAccessToken();
             $this->token = $newRefreshToken;
-
-            if (defined('WP_DEBUG') && true === WP_DEBUG) {
-                error_log('New token generated: ' . $newRefreshToken . ' - ' . date('l jS \of F Y h:i:s A'));
-            }
 
             return $this->getFormFields();
         }
@@ -196,14 +176,6 @@ class klypZoho
         $response   = $this->remotePost($url, 'POST', $data, array('Authorization' => 'Zoho-oauthtoken ' . $this->token));
         $status     = $this->remoteStatus($response);
 
-        if (defined('WP_DEBUG') && true === WP_DEBUG) {
-            // start of log
-            error_log('Start of upsert: ' . date('l jS \of F Y h:i:s A'));
-            error_log('URL: ' . $url);
-            error_log('Data: ' . print_r($data, true));
-            error_log('Response: ' . print_r($response, true));
-        }
-
         if ($status == 200) {
             $body = wp_remote_retrieve_body($response);
 
@@ -225,17 +197,7 @@ class klypZoho
         } else { // refresh token
             $newRefreshToken = $this->refreshAccessToken();
             $this->token = $newRefreshToken;
-
-            if (defined('WP_DEBUG') && true === WP_DEBUG) {
-                error_log('New token generated: ' . date('l jS \of F Y h:i:s A'));
-            }
-
             $this->upsert();
-        }
-
-        if (defined('WP_DEBUG') && true === WP_DEBUG) {
-            error_log('Return: ' . print_r($return, true));
-            error_log('End of upsert: ' . date('l jS \of F Y h:i:s A'));
         }
 
         return $return;
