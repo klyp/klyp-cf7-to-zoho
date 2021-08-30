@@ -21,3 +21,6 @@ Initial release
 v1.0.1 - 2021.08.13
 Added Lead Source
 Added option to submit as webform
+
+v1.0.2 - 2021.08.30
+Removed logging
