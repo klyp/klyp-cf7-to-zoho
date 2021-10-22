@@ -33,13 +33,11 @@ function klypCf7zohoAdditionalSettingsTab($post)
 
     echo '
         <h2>Zoho Settings</h2>
-        <table class="form-table" role="presentation">
+        <table class="form-table" role="presentation" style="width:100%;">
             <tbody>
                 <tr>
-                    <td>
-                        <p class="description">
-                            Zoho object
-                        </p>
+                    <td style="width:20%; vertical-align:top">
+                        <p class="description">Select Zoho object</p>
                         <label for="klyp-cf7-to-zoho-object">
                         <select id="klyp-cf7-to-zoho-object" name="klyp-cf7-to-zoho-object" class="large-text code">
                             <option value="Leads" ' . (esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-object', true)) == 'Leads' ? 'selected' : '') . '>Leads</option>
@@ -65,10 +63,14 @@ function klypCf7zohoAdditionalSettingsTab($post)
                         </select>
                         </label>
                     </td>
-                    <td>
-                        <p class="description">
-                            Primary Key is used as a unique identifier to determine pre-existing object.
-                        </p>
+                    <td style="width:40%; vertical-align:top">
+                        <p class="description">Lead Source (only works in API method)</p>
+                        <label for="klyp-cf7-to-zoho-leadsource">
+                            <input type="text" id="klyp-cf7-to-zoho-leadsource" name="klyp-cf7-to-zoho-leadsource" class="large-text code" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-leadsource', true)) . '">
+                        </label>
+                    </td>
+                    <td style="width:40%; vertical-align:top">
+                        <p class="description">Primary Key is used as a unique identifier to determine pre-existing object</p>
                         <select name="klyp-cf7-to-zoho-primary-key" id="klyp-cf7-to-zoho-primary-key" class="large-text code">
                             <option value="">Please select zoho field to map</option>';
 
@@ -81,9 +83,40 @@ function klypCf7zohoAdditionalSettingsTab($post)
                         </select>
                     </td>
                 </tr>
+                <tr>
+                    <td vertical-align:top">
+                        <p class="description">Submission method</p>
+                        <select id="klyp-cf7-to-zoho-method" name="klyp-cf7-to-zoho-method" class="large-text code">
+                            <option value="API" ' . (esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-method', true)) == 'API' ? 'selected' : '') . '>API</option>
+                            <option value="Webform" ' . (esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-method', true)) == 'Webform' ? 'selected' : '') . '>Webform</option>
+                        </select>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="klyp-cf7-to-zoho-method-fields" style="display:' . (esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-method', true)) != 'Webform' ? 'none' : '') . '">
+                    <td style="vertical-align:top;">
+                        <p class="description">actionType field value</p>
+                        <label for="klyp-cf7-to-zoho-method-actionType">
+                            <input type="text" id="klyp-cf7-to-zoho-method-actionType" name="klyp-cf7-to-zoho-method-actionType" class="large-text code" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-method-actionType', true)) . '">
+                        </label>
+                    </td>
+                    <td style="vertical-align:top;">
+                        <p class="description">xnQsjsdp field value</p>
+                        <label for="klyp-cf7-to-zoho-method-xnQsjsdp">
+                            <input type="text" id="klyp-cf7-to-zoho-method-xnQsjsdp" name="klyp-cf7-to-zoho-method-xnQsjsdp" class="large-text code" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-method-xnQsjsdp', true)) . '">
+                        </label>
+                    </td>
+                    <td style="vertical-align:top;">
+                        <p class="description">xmIwtLD field value</p>
+                        <label for="klyp-cf7-to-zoho-method-xmIwtLD">
+                            <input type="text" id="klyp-cf7-to-zoho-method-xmIwtLD" name="klyp-cf7-to-zoho-method-xmIwtLD" class="large-text code" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-zoho-method-xmIwtLD', true)) . '">
+                        </label>
+                    </td>
+                </tr>
             </tbody>
         </table>';
-
 
     echo '<p><hr></p>
 
@@ -92,13 +125,13 @@ function klypCf7zohoAdditionalSettingsTab($post)
         <table class="form-table" role="presentation">
             <thead>
                 <tr>
-                    <th width="45%">
+                    <th style="width:45%; vertical-align:top">
                         Contact Form Field
                     </th>
-                    <th width="45%">
+                    <th style="width:45%; vertical-align:top">
                         Zoho Form Field
                     </th>
-                    <td width="10%" align="right">
+                    <td style="width:10%; vertical-align:top; text-align:right">
                         <button id="klyp-cf7-to-zoho-map-add-new-map">+</button>
                     </td>
                 </tr>
@@ -134,7 +167,7 @@ function klypCf7zohoAdditionalSettingsTab($post)
 
                                         foreach ($zhFields as $key => $zhField) {
                                             if ($zhField->api_name != '') {
-                                                echo '<option value="' . $zhField->api_name . '" ' . ($zhMapFormFields[$i] == $zhField->api_name ? 'selected="selected"' : '') . '>' . $zhField->field_label . '</option>';
+                                                echo '<option value="' . $zhField->api_name . '|' . $zhField->field_label . '" ' . ($zhMapFormFields[$i] == $zhField->api_name . '|' . $zhField->field_label ? 'selected="selected"' : '') . '>' . $zhField->field_label . '</option>';
                                             }
                                         }
                         echo '
@@ -167,7 +200,7 @@ function klypCf7zohoAdditionalSettingsTab($post)
 
                             foreach ($zhFields as $key => $zhField) {
                                 if ($zhField->api_name != '') {
-                                    echo '<option value="' . $zhField->api_name . '">' . $zhField->field_label . '</option>';
+                                    echo '<option value="' . $zhField->api_name . '|' . $zhField->field_label . '">' . $zhField->field_label . '</option>';
                                 }
                             }
         echo '          </select>
@@ -193,7 +226,12 @@ function klypCf7zohoSaveContactForm($contact_form, $args)
     // allowed fields
     $cs7Fields = array (
         'klyp-cf7-to-zoho-object',
+        'klyp-cf7-to-zoho-leadsource',
         'klyp-cf7-to-zoho-primary-key',
+        'klyp-cf7-to-zoho-method',
+        'klyp-cf7-to-zoho-method-actionType',
+        'klyp-cf7-to-zoho-method-xnQsjsdp',
+        'klyp-cf7-to-zoho-method-xmIwtLD',
         'klyp-cf7-to-zoho-cf-map-fields',
         'klyp-cf7-to-zoho-zh-map-fields'
     );
