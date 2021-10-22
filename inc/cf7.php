@@ -4,21 +4,11 @@
 defined('ABSPATH') || die('Wordpress is not installed properly.');
 
 /**
- * Catch contact form 7 submission
- * @param array
- * @param array
- * @return array
+ * Submit to zoho
+ * @return void
  */
-function klypZhCf7CatchSubmission($result, $tags)
+function klypZhCf7SendToZoho()
 {
-    if (! $result->is_valid()) {
-        return $result;
-    }
-
-    if (get_option('klyp_cf7tozoho_client_id') == '' && get_option('klyp_cf7tozoho_client_secret') == '') {
-        return;
-    }
-
     // form options
     $cf7FormId          = intval(sanitize_key($_POST['_wpcf7']));
     $cf7FormFields      = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-cf-map-fields', true);
@@ -39,12 +29,45 @@ function klypZhCf7CatchSubmission($result, $tags)
     if ($zhFormMethod == 'API') {
         $zoho->zhObject      = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-object', true);
         $zoho->zhPrimaryKey  = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-primary-key', true);
-        $zohoReturn = $zoho->upsert();
+        $zohoReturn          = $zoho->upsert();
     } elseif ($zhFormMethod == 'Webform') {
         $zoho->actionType    = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-method-actionType', true);
         $zoho->xnQsjsdp      = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-method-xnQsjsdp', true);
         $zoho->xmIwtLD       = get_post_meta($cf7FormId, '_klyp-cf7-to-zoho-method-xmIwtLD', true);
-        $zohoReturn = $zoho->webform();
+        $zohoReturn          = $zoho->webform();
+    }
+}
+
+/**
+ * If submission is spam
+ * @param array
+ * @param array
+ * @return void
+ */
+function klypZhCf7CatchSpam($spam, $instance)
+{
+    if ($spam) {
+        return $spam;
+    }
+
+    return klypZhCf7SendToZoho();
+}
+add_filter('wpcf7_spam', 'klypZhCf7CatchSpam', 10, 2);
+
+/**
+ * Catch contact form 7 submission
+ * @param array
+ * @param array
+ * @return array
+ */
+function klypZhCf7CatchSubmission($result, $tags)
+{
+    if (! $result->is_valid()) {
+        return $result;
+    }
+
+    if (get_option('klyp_cf7tozoho_client_id') == '' && get_option('klyp_cf7tozoho_client_secret') == '') {
+        return $result;
     }
 
     return $result;
