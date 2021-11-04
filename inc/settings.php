@@ -113,14 +113,6 @@ function klypCF7ToZohoGetTokenAccess()
 
     $body = wp_remote_retrieve_body($response);
 
-    if (defined('WP_DEBUG') && true === WP_DEBUG) {
-        error_log('Start of getting token: ' . date('l jS \of F Y h:i:s A'));
-        error_log('URL: ' . $url);
-        error_log('Response: ' . print_r($response, true));
-        error_log('Body: ' . print_r($body, true));
-        error_log('End of getting token: ' . date('l jS \of F Y h:i:s A'));
-    }
-    
     echo $body;
     die();
 }
