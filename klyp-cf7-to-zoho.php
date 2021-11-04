@@ -3,7 +3,7 @@
  * Plugin Name: Klyp Contact Form 7 to ZOHO
  * Plugin URI: https://github.com/klyp/klyp-cf7-to-zoho
  * Description: This plugin allows you to map CF7 fields to ZOHO form fields.
- * Version: 1.0.0
+ * Version: 1.0.4
  * Author: Klyp
  * Author URI: https://klyp.co
  * License: GPL2
